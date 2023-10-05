@@ -1,10 +1,17 @@
 ---
 - name: "Install dependencies"
   hosts: management
-  user: ubuntu
+  remote_user: ubuntu
   gather_facts: false
   become: yes
+  become_user: root  
+
+
   pre_tasks:
+    - name: "wait 600 seconds for target connection to become reachable/usable."
+      wait_for_connection:
+        timeout: 600
+
     - name: "Install 'unzip'"
       apt:
         name: [ "unzip" ]
@@ -17,13 +24,14 @@
 
 - name: "Authenticate AWS CLI with AWS"
   hosts: management
-  user: ubuntu
+  remote_user: ubuntu
   gather_facts: false
   become: yes
   vars:
     AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
     AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
     AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
+
   tasks:
     - name: Set the aws_access_key_id
       shell: "aws configure set aws_access_key_id {{ AWS_ACCESS_KEY_ID }}"
@@ -34,7 +42,7 @@
 
 - name: "Fetch kubectl config"
   hosts: management
-  user: ubuntu
+  remote_user: ubuntu
   gather_facts: false
   become: yes
   vars:
@@ -44,9 +52,6 @@
   pre_tasks:
     - name: Create a kubeconfig file for the cluster
       shell: "aws eks update-kubeconfig --region {{ AWS_DEFAULT_REGION }} --name {{ ENVIRONMENT_NAME }}-cluster"
-      
-    - name: "wait 600 seconds for target connection to become reachable/usable."
-      wait_for_connection:
-        timeout: 600
 
+  
     
