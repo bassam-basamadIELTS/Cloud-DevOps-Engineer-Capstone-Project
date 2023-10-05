@@ -36,6 +36,8 @@ Mappings:
     aws:
       ec2: ec2.amazonaws.com
 
+      
+
 Resources:
   NodeInstanceRole:
     Type: "AWS::IAM::Role"
