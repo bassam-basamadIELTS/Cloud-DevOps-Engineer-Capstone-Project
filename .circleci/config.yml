@@ -57,8 +57,8 @@ jobs:
           command: |
             echo "Docker ID and Image: $DOCKER_IMAGE_NAME"
             docker login -u="$DOCKERHUB_USERNAME" -p="$DOCKERHUB_PASSWORD"
-            docker tag $DOCKER_IMAGE_NAME $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME
-            docker push $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME
+            docker tag $DOCKER_IMAGE_NAME $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID:0:7}
+            docker push $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-infrastructure:
     docker:
@@ -132,7 +132,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
+            - "d6:37:b1:f1:ac:c4:42:f3:09:e4:12:c9:ed:af:9a:83:90:2e:28:c2"
       - attach_workspace:
           at: ~/
       - run:
@@ -159,7 +159,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
+            - "d6:37:b1:f1:ac:c4:42:f3:09:e4:12:c9:ed:af:9a:83:90:2e:28:c2"
       - attach_workspace:
           at: ~/
       - run:
@@ -209,7 +209,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
+            - "d6:37:b1:f1:ac:c4:42:f3:09:e4:12:c9:ed:af:9a:83:90:2e:28:c2"
       - attach_workspace:
           at: ~/
       - run:
