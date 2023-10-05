@@ -123,14 +123,13 @@ jobs:
       - run:
           name: Extract the IPs of the management instances for Ansible
           command: |
-            echo [management] > ~/inventory.txt
-            mgmt_dns_name = $(aws ec2 describe-instances \
+            # echo [management] > ~/inventory.txt
+            aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].[PublicDnsName]' \
               --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-management*" \
-              --output text)
-              
-            echo $mgmt_dns_name >> ~/inventory.txt
+              --output text >> ~/inventory.txt
+
             cat ~/inventory.txt
       - persist_to_workspace:
           root: ~/
