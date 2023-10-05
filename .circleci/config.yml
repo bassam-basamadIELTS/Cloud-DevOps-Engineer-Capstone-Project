@@ -130,7 +130,6 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - install_ansible
       - add_ssh_keys:
           fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
       - attach_workspace:
