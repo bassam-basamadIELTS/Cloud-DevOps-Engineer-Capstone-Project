@@ -116,7 +116,7 @@ jobs:
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
-              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-management*" \
+              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-management*" "Name=instance-state-name,Values=running" \
               --output text >> ~/inventory.txt
             cat ~/inventory.txt
       - persist_to_workspace:
@@ -147,8 +147,8 @@ jobs:
                 echo "Our management instances are already configured."
               else
                 cat ~/inventory.txt
-                echo "Wait 120 seconds..."
-                sleep 120
+                echo "Wait 180 seconds..."
+                sleep 180
                 cd ansible
                 export ANSIBLE_HOST_KEY_CHECKING=False
                 ansible-playbook -i ~/inventory.txt configure-server.yml
