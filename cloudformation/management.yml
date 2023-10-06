@@ -11,11 +11,11 @@ Parameters:
     Description: SSH key for management access
     Default: test_keypair
     Type: String
-  amiImageId_1:
+  amiImageId1:
     Description: Defines the Image-ID of the OS to deploy
     Default: ami-04d1dcfb793f6fa37
     Type: String
-  amiImageId_2:
+  amiImageId2:
     Description: Defines the Image-ID of the OS to deploy
     Default: ami-04d1dcfb793f6fa37
     Type: String
@@ -39,7 +39,7 @@ Resources:
       SecurityGroups:
         - Ref: InstanceSecurityGroup
       KeyName: !Ref SSHKeyName
-      ImageId: !Ref amiImageId_1
+      ImageId: !Ref amiImageId1
       NetworkInterfaces: 
         - AssociatePublicIpAddress: "true"
       Tags:
@@ -57,7 +57,7 @@ Resources:
       KeyName: !Ref SSHKeyName
       NetworkInterfaces: 
         - AssociatePublicIpAddress: "true"
-      ImageId: !Ref amiImageId_2
+      ImageId: !Ref amiImageId2
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName}-management2
