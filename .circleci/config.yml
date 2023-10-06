@@ -50,9 +50,10 @@ jobs:
           name: Install dependencies
           command: |
             #apk add --update ansible
+            apk add ansible
             #apk add ansible
-            pip install --upgrade pip
-            pip install git+git://github.com/ansible/ansible.git@devel
+            #pip install --upgrade pip
+            #pip install git+git://github.com/ansible/ansible.git@devel
             #pip install ansible
             #apt-get update -y
             #apt install ansible -y
