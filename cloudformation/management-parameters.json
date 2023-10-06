@@ -1,5 +1,5 @@
 [
   "EnvironmentName=capstone-project",
   "SSHKeyName=test_keypair",
-  "amiImageId=ami-053b0d53c279acc90"
+  "amiImageId=ami-04d1dcfb793f6fa37"
 ]
