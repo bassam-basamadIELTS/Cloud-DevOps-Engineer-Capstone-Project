@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: capstone-project-app
-          image: bassambasamad/cloud-devops-capstone-proj
+          image: bassambasamad/cdoec-proj
           ports:
             - containerPort: 80

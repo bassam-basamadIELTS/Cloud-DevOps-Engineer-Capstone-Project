@@ -68,8 +68,8 @@ jobs:
           command: |
             echo "Docker ID and Image: $DOCKER_IMAGE_NAME"
             docker login -u="$DOCKERHUB_USERNAME" -p="$DOCKERHUB_PASSWORD"
-            docker tag $DOCKER_IMAGE_NAME $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID:0:7}
-            docker push $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID:0:7}
+            docker tag $DOCKER_IMAGE_NAME $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:$CIRCLE_WORKFLOW_ID
+            docker push $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:$CIRCLE_WORKFLOW_ID
 
   deploy-infrastructure:
     docker:
@@ -229,6 +229,10 @@ jobs:
           root: ~/
           paths:
             - elb_dns.txt
+      - run:
+         name: Echo elb text
+         command: |
+             cat ~/elb_dns.txt
 
   deploy-docker:
     docker:
