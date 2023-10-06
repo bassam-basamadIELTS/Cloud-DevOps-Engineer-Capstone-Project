@@ -126,7 +126,7 @@ jobs:
             echo [management] > ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
-              --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
+              --query 'Reservations[*].Instances[*].[PublicDnsName]' \
               --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-management*" "Name=instance-state-name,Values=running" \
               --output text >> ~/inventory.txt
             cat ~/inventory.txt
@@ -145,7 +145,7 @@ jobs:
       - checkout
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
+          fingerprints: ["73:ba:4a:49:20:9c:2e:ea:64:42:e7:94:93:d2:08:85"]
       - attach_workspace:
           at: ~/
       #- run:
@@ -183,7 +183,7 @@ jobs:
       - checkout
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
+          fingerprints: ["73:ba:4a:49:20:9c:2e:ea:64:42:e7:94:93:d2:08:85"]
       - attach_workspace:
           at: ~/
       #- run:
@@ -238,7 +238,7 @@ jobs:
       - checkout
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
+          fingerprints: ["73:ba:4a:49:20:9c:2e:ea:64:42:e7:94:93:d2:08:85"]
       - attach_workspace:
           at: ~/
       #- run:
@@ -264,8 +264,6 @@ workflows:
             branches:
               only: [ master ]
       - deploy-infrastructure:
-          requires:
-            - upload-docker
           filters:
             branches:
               only: [ master ]
