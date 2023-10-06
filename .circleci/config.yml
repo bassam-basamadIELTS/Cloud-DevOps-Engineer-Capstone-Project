@@ -137,7 +137,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
+            # apk add --update ansible
+            apt-get update -y
+            apt install ansible -y
+            which ansible
       - run:
           name: Configure server
           command: |
@@ -147,8 +150,8 @@ jobs:
                 echo "Our management instances are already configured."
               else
                 cat ~/inventory.txt
-                echo "Wait 500 seconds..."
-                sleep 500
+                # echo "Wait 500 seconds..."
+                # sleep 500
                 cd ansible
                 export ANSIBLE_HOST_KEY_CHECKING=False
                 ansible-playbook -i ~/inventory.txt configure-server.yml
@@ -166,7 +169,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
+            # apk add --update ansible
+            apt-get update -y
+            apt install ansible -y
+            which ansible
       - run:
           name: Configure server
           command: |
@@ -188,8 +194,8 @@ jobs:
                 echo "Our management instances are already configured."
               else
                 cat ~/inventory.txt
-                echo "Wait 60 seconds..."
-                sleep 60
+                echo "Wait 120 seconds..."
+                sleep 120
               fi
       - run:
           name: Display the LoadBalancer's DNS name
