@@ -3,5 +3,5 @@
   "MinSize=2",
   "MaxSize=6",
   "DesiredSize=4",
-  "KeyPairName=test_keypair"
+  "KeyPairName=myKeypare_udecity"
 ]
