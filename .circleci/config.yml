@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install dependencies
+          command: yum install -y tar gzip
+      - run:
           name: Extract the IPs of the management instances for Ansible
           command: |
             echo [management] > ~/inventory.txt
