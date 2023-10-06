@@ -72,3 +72,10 @@ jobs:
                 export ANSIBLE_HOST_KEY_CHECKING=False
                 ansible-playbook -i ~/inventory.txt configure-server.yml
               fi
+workflows:
+  default:
+    jobs:
+      - deploy-infrastructure
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
