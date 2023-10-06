@@ -12,6 +12,65 @@ commands:
             sudo add-apt-repository --yes --update ppa:ansible/ansible
             sudo apt install ansible -y
 jobs:
+  test-build:
+    docker:
+      - image: python:3.7.3-stretch
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      # run build
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            make install
+
+      # run lint
+      - run:
+          name: run lint
+          command: |
+            . venv/bin/activate
+            make lint
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+  upload-docker:
+    docker:
+      - image: circleci/golang:1.15
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - setup_remote_docker:
+          version: 19.03.13
+
+      - run:
+          name: Build docker container
+          command: |
+            docker build --tag=$DOCKER_IMAGE_NAME .
+            docker image ls
+
+      - run:
+          name: Upload Docker to Dockerhub
+          command: |
+            echo "Docker ID and Image: $DOCKER_IMAGE_NAME"
+            docker login -u="$DOCKERHUB_USERNAME" -p="$DOCKERHUB_PASSWORD"
+            docker tag $DOCKER_IMAGE_NAME $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID:0:7}
+            docker push $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID:0:7}
+
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -20,6 +79,47 @@ jobs:
       - run:
           name: Install dependencies
           command: yum install -y tar gzip
+      - run:
+          name: Ensure EKS network exists
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudformation/network.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-eks-network" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudformation/network-parameters.json
+      - run:
+          name: Ensure EKS Cluster exists
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudformation/cluster.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-eks-cluster" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudformation/cluster-parameters.json \
+              --capabilities CAPABILITY_NAMED_IAM
+          no_output_timeout: 15m
+      - run:
+          name: Ensure Nodegroup exists
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudformation/nodegroup.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-eks-nodegroup" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudformation/nodegroup-parameters.json \
+              --capabilities CAPABILITY_NAMED_IAM
+      - run:
+          name: Ensure management instances exists
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudformation/management.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-eks-management" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudformation/management-parameters.json \
+              --output text >> ~/checkIfDeployed.txt
+            cat ~/checkIfDeployed.txt
       - run:
           name: Extract the IPs of the management instances for Ansible
           command: |
@@ -39,7 +139,7 @@ jobs:
   configure-infrastructure:
     docker:
       #- image: python:3.7-alpine3.11
-      #- image: python:3.9-alpine3.13
+      # - image: python:3.9-alpine3.13
       - image: cimg/base:stable
     steps:
       - checkout
@@ -48,18 +148,17 @@ jobs:
           fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
       - attach_workspace:
           at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            #apk add --update ansible
-            #apk add ansible
-            #apk add ansible
-            #pip install --upgrade pip
-            #pip install git+git://github.com/ansible/ansible.git@devel
-            #pip install ansible
-            #apt-get update -y
-            #apt install ansible -y
-            #which ansible
+      #- run:
+      #    name: Install dependencies
+      #    command: |
+      #      #apk add --update ansible
+      #      #apk add ansible
+      #      #pip install --upgrade pip
+      #      #pip install git+git://github.com/ansible/ansible.git@devel
+      #      python3 -m pip install --ubunto ansible
+      #      #apt-get update -y
+      #      #apt install ansible -y
+      #      #which ansible
       - run:
           name: Configure server
           command: |
@@ -75,10 +174,107 @@ jobs:
                 export ANSIBLE_HOST_KEY_CHECKING=False
                 ansible-playbook -i ~/inventory.txt configure-server.yml
               fi
+
+  configure-cluster:
+    docker:
+      #- image: python:3.7-alpine3.11
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_ansible
+      - add_ssh_keys:
+          fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
+      - attach_workspace:
+          at: ~/
+      #- run:
+      #    name: Install dependencies
+      #    command: |
+      #      apk add ansible
+      #      #apt-get update -y
+      #      #apt install ansible -y
+      #      #which ansible
+      - run:
+          name: Configure server
+          command: |
+            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
+              then
+                cat ~/inventory.txt
+                echo "Our management instances are already configured."
+              else
+                cat ~/inventory.txt
+                cd ansible
+                ansible-playbook -i ~/inventory.txt configure-cluster.yml
+              fi
+      - run:
+          name: Wait for LoadBalancer's domain to become reachable
+          command: |
+            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
+              then
+                cat ~/inventory.txt
+                echo "Our management instances are already configured."
+              else
+                cat ~/inventory.txt
+                echo "Wait 120 seconds..."
+                sleep 120
+              fi
+      - run:
+          name: Display the LoadBalancer's DNS name
+          command: |
+            cat ~/inventory.txt
+            cd ansible
+            ansible-playbook -i ~/inventory.txt save-elb-dns.yml
+            cat ~/elb_dns.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - elb_dns.txt
+
+  deploy-docker:
+    docker:
+      #- image: python:3.7-alpine3.11
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_ansible
+      - add_ssh_keys:
+          fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
+      - attach_workspace:
+          at: ~/
+      #- run:
+      #    name: Install dependencies
+      #    command: |
+      #      apk add ansible
+      - run:
+          name: Deploy newest Docker Image
+          command: |
+            cat ~/inventory.txt
+            cd ansible
+            ansible-playbook -i ~/inventory.txt deploy-app.yml
+          no_output_timeout: 2m
+
 workflows:
   default:
     jobs:
-      - deploy-infrastructure
+      - test-build
+      - upload-docker:
+          requires:
+            - test-build
+          filters:
+            branches:
+              only: [ master ]
+      - deploy-infrastructure:
+          requires:
+            - upload-docker
+          filters:
+            branches:
+              only: [ master ]
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
+      - configure-cluster:
+          requires:
+            - configure-infrastructure
+            - upload-docker
+      - deploy-docker:
+          requires:
+            - configure-cluster

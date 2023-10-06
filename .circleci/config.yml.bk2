@@ -1,0 +1,84 @@
+version: 2.1
+
+commands:
+ install_ansible:
+    description: install ansible
+    steps:
+      - run:
+          name: install ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common -y
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible -y
+jobs:
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: yum install -y tar gzip
+      - run:
+          name: Extract the IPs of the management instances for Ansible
+          command: |
+            echo [management] > ~/inventory.txt
+            aws ec2 describe-instances \
+              --region "${AWS_DEFAULT_REGION}" \
+              --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
+              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-management*" "Name=instance-state-name,Values=running" \
+              --output text >> ~/inventory.txt
+            cat ~/inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - inventory.txt
+            - checkIfDeployed.txt
+
+  configure-infrastructure:
+    docker:
+      #- image: python:3.7-alpine3.11
+      #- image: python:3.9-alpine3.13
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_ansible
+      - add_ssh_keys:
+          fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            #apk add --update ansible
+            #apk add ansible
+            #apk add ansible
+            #pip install --upgrade pip
+            #pip install git+git://github.com/ansible/ansible.git@devel
+            #pip install ansible
+            #apt-get update -y
+            #apt install ansible -y
+            #which ansible
+      - run:
+          name: Configure server
+          command: |
+            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
+              then
+                cat ~/inventory.txt
+                echo "Our management instances are already configured."
+              else
+                cat ~/inventory.txt
+                # echo "Wait 500 seconds..."
+                # sleep 500
+                cd ansible
+                export ANSIBLE_HOST_KEY_CHECKING=False
+                ansible-playbook -i ~/inventory.txt configure-server.yml
+              fi
+workflows:
+  default:
+    jobs:
+      - deploy-infrastructure
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
