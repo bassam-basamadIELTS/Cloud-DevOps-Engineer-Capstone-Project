@@ -127,7 +127,8 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      #- image: python:3.7-alpine3.11
+       - image: python:3.9-alpine3.13
     steps:
       - checkout
       - add_ssh_keys:
@@ -137,10 +138,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # apk add --update ansible
-            apt-get update -y
-            apt install ansible -y
-            which ansible
+            #apk add --update ansible
+            #apk add ansible
+            python3 -m pip install --ubunto ansible
+            #apt-get update -y
+            #apt install ansible -y
+            #which ansible
       - run:
           name: Configure server
           command: |
@@ -169,10 +172,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # apk add --update ansible
-            apt-get update -y
-            apt install ansible -y
-            which ansible
+            apk add ansible
+            #apt-get update -y
+            #apt install ansible -y
+            #which ansible
       - run:
           name: Configure server
           command: |
@@ -221,7 +224,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
+            apk add ansible
       - run:
           name: Deploy newest Docker Image
           command: |
