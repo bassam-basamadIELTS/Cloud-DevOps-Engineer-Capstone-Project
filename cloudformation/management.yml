@@ -40,8 +40,6 @@ Resources:
         - Ref: InstanceSecurityGroup
       KeyName: !Ref SSHKeyName
       ImageId: !Ref amiImageId1
-      NetworkInterfaces: 
-        - AssociatePublicIpAddress: "true"
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName}-management1
@@ -55,8 +53,6 @@ Resources:
       SecurityGroups:
         - Ref: InstanceSecurityGroup
       KeyName: !Ref SSHKeyName
-      NetworkInterfaces: 
-        - AssociatePublicIpAddress: "true"
       ImageId: !Ref amiImageId2
       Tags:
         - Key: Name
