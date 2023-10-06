@@ -147,8 +147,8 @@ jobs:
                 echo "Our management instances are already configured."
               else
                 cat ~/inventory.txt
-                echo "Wait 180 seconds..."
-                sleep 180
+                echo "Wait 500 seconds..."
+                sleep 500
                 cd ansible
                 export ANSIBLE_HOST_KEY_CHECKING=False
                 ansible-playbook -i ~/inventory.txt configure-server.yml
