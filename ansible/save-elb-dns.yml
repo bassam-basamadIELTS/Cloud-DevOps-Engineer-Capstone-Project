@@ -11,7 +11,7 @@
       shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
       register: elb_dns
       args:
-        chdir: $HOME
+        chdir: /home/
 
     - name: Copy the output to a local file
       copy:

@@ -148,17 +148,6 @@ jobs:
           fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
       - attach_workspace:
           at: ~/
-      #- run:
-      #    name: Install dependencies
-      #    command: |
-      #      #apk add --update ansible
-      #      #apk add ansible
-      #      #pip install --upgrade pip
-      #      #pip install git+git://github.com/ansible/ansible.git@devel
-      #      python3 -m pip install --ubunto ansible
-      #      #apt-get update -y
-      #      #apt install ansible -y
-      #      #which ansible
       - run:
           name: Configure server
           command: |
@@ -177,7 +166,6 @@ jobs:
 
   configure-cluster:
     docker:
-      #- image: python:3.7-alpine3.11
       - image: cimg/base:stable
     steps:
       - checkout
@@ -186,13 +174,6 @@ jobs:
           fingerprints: ["74:26:4e:8f:1d:56:b1:dd:8f:fd:22:37:f2:70:cf:3a"]
       - attach_workspace:
           at: ~/
-      #- run:
-      #    name: Install dependencies
-      #    command: |
-      #      apk add ansible
-      #      #apt-get update -y
-      #      #apt install ansible -y
-      #      #which ansible
       - run:
           name: Configure server
           command: |
