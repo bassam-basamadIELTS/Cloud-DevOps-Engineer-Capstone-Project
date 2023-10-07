@@ -26,6 +26,9 @@ The CloudFormation Deployment can be broken down into four Parts:
 - **NodeGroup**, each NodeGroup has a set of rules to define how instances are operated and created for the EKS-Cluster
 - **Management** is needed to configure and manage the Cluster and its deployments and services. I created two management hosts for extra redundancy if one of them fails.
 
+#### Screen shot of the uploaded image to docker hub:
+![Docker Hub](./screenshots/uploaded-image-to-docker-hub.png)
+
 #### List of deployed Stacks:
 ![CloudFormation](./screenshots/cloudformation-stacks.png)
 
