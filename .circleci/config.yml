@@ -68,8 +68,8 @@ jobs:
           command: |
             echo "Docker ID and Image: $DOCKER_IMAGE_NAME"
             docker login -u="$DOCKERHUB_USERNAME" -p="$DOCKERHUB_PASSWORD"
-            docker tag $DOCKER_IMAGE_NAME $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:$CIRCLE_WORKFLOW_ID
-            docker push $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:$CIRCLE_WORKFLOW_ID
+            docker tag $DOCKER_IMAGE_NAME $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID}
+            docker push $DOCKER_HUB_NAME/$DOCKER_IMAGE_NAME:${CIRCLE_WORKFLOW_ID}
 
   deploy-infrastructure:
     docker:
@@ -268,6 +268,8 @@ workflows:
             branches:
               only: [ master ]
       - deploy-infrastructure:
+          requires:
+            - upload-docker
           filters:
             branches:
               only: [ master ]
