@@ -45,12 +45,29 @@ I used CircleCi to create a CI/CD Pipeline to test and deploy changes manually b
 Linting is used to check if the Application and Dockerfile is syntactically correct.
 This process makes sure that the code quality is always as good as possible.
 
-![Linting step](./screenshots/lint-step-testing.png)
+#### This is the output when the step fails:
+
+![Linting step fail](./screenshots/lint-step-testing-fail.png)
+
+
+#### This is the output when the step passes:
+
+![Linting step fail](./screenshots/lint-step-testing-success.png)
+
 
 ## Access the Application
 
 After the EKS-Cluster has been successfully configured using Ansible within the CI/CD Pipeline, I checked the deployment and service as follows:
 
-Public LB DNS: http://a9d7166a2525d405db00907ffb57de4e-1479088191.eu-central-1.elb.amazonaws.com
+$ kubectl get deployments
+NAME                          READY   UP-TO-DATE   AVAILABLE   AGE
+capstone-project-deployment   4/4     4            4           68m
+
+$ kubectl get services
+NAME                       TYPE           CLUSTER-IP       EXTERNAL-IP                                                                  PORT(S)        AGE
+capstone-project-service   LoadBalancer   10.100.240.221   a9d7166a2525d405db00907ffb57de4e-1479088191.us-east-1.elb.amazonaws.com   80:32299/TCP   69m
+kubernetes                 ClusterIP      10.100.0.1       <none>                                                                       443/TCP        80m
+
+Public LB DNS: http://a7d54c5f5f46b4ce2ad2a12d88deb9f8-1676420822.us-east-1.elb.amazonaws.com/
 
 ![Access LB DNS](./screenshots/load-balancer-url-for-the-app.png)
