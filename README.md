@@ -59,6 +59,7 @@ This process makes sure that the code quality is always as good as possible.
 
 After the EKS-Cluster has been successfully configured using Ansible within the CI/CD Pipeline, I checked the deployment and service as follows:
 
+```
 $ kubectl get deployments
 NAME                          READY   UP-TO-DATE   AVAILABLE   AGE
 capstone-project-deployment   4/4     4            4           68m
@@ -68,6 +69,7 @@ $ kubectl get services
 NAME                       TYPE           CLUSTER-IP       EXTERNAL-IP                                                                  PORT(S)        AGE
 capstone-project-service   LoadBalancer   10.100.240.221   a7d54c5f5f46b4ce2ad2a12d88deb9f8-1676420822.us-east-1.elb.amazonaws com   80:32299/TCP      69m
 kubernetes                 ClusterIP      10.100.0.1       <none>                                                                       443/TCP        80m
+```
 
 Public LB DNS: http://a7d54c5f5f46b4ce2ad2a12d88deb9f8-1676420822.us-east-1.elb.amazonaws.com/
 
