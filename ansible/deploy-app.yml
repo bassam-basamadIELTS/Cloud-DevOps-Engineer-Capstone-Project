@@ -11,5 +11,5 @@
     - name: Update the deployment to run the latest Build
       shell: "./bin/kubectl set image deployment/{{ ENVIRONMENT_NAME }}-deployment {{ ENVIRONMENT_NAME }}-app=bassambasamad/{{ DOCKER_IMAGE_NAME }}:{{ CIRCLE_WORKFLOW_ID }}"
       args:
-        chdir: /home/
+        chdir: $HOME
 
