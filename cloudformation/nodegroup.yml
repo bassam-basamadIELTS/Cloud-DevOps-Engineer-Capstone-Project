@@ -24,7 +24,7 @@ Parameters:
 
   KeyPairName:
     Description: The EC2 Key Pair to allow SSH access to the instances
-    Default: myKeypare_udecity
+    Default: udacity_capstone
     Type: AWS::EC2::KeyPair::KeyName
 
 Mappings:
