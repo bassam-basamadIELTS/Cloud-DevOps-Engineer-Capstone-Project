@@ -13,9 +13,9 @@
     
     - name: Create a directory if it does not exist
       ansible.builtin.file:
-      path: /home/ubuntu
-      state: directory
-      mode: '0755'
+        path: /home/ubuntu
+        state: directory
+        mode: '0755'
 
     - name: "create a file"
       shell: touch /home/ubuntu/elb_dns.txt
