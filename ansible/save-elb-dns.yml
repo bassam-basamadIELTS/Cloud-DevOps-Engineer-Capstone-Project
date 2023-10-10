@@ -8,10 +8,9 @@
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   tasks:
     - name: Get the LoadBalancer's DNS name
-      shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
+      shell: "./home/ubuntu/bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
       register: elb_dns
-      args:
-        chdir: $HOME
+      
 
     - name: Copy the output to a local file
       copy:
