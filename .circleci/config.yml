@@ -201,7 +201,7 @@ jobs:
       - run:
           name: Display the LoadBalancer's DNS name
           command: |
-            -- touch ~/elb_dns.txt 
+            # touch ~/elb_dns.txt 
             cat ~/inventory.txt
             cd ansible
             ansible-playbook -i ~/inventory.txt save-elb-dns.yml
