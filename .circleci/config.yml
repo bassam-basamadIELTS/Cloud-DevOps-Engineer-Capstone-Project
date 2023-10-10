@@ -205,15 +205,15 @@ jobs:
             cat ~/inventory.txt
             cd ansible
             ansible-playbook -i ~/inventory.txt save-elb-dns.yml
-            cat /home/ubuntu/elb_dns.txt
+            cat ~/elb_dns.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - /home/ubuntu/elb_dns.txt
+            - elb_dns.txt
       - run:
          name: Echo elb text
          command: |
-             cat /home/ubuntu/elb_dns.txt
+             cat ~/elb_dns.txt
 
   deploy-docker:
     docker:
