@@ -18,11 +18,11 @@
         mode: '0755'
 
     - name: "create a file"
-      shell: touch /home/ubuntu/elb_dns.txt
+      shell: touch ~/elb_dns.txt
       
 
     - name: Copy the output to a local file
       copy:
         content: "{{ elb_dns.stdout }}"
-        dest: "/home/ubuntu/elb_dns.txt"
+        dest: "ّ~/elb_dns.txt"
       delegate_to: localhost
