@@ -201,19 +201,19 @@ jobs:
       - run:
           name: Display the LoadBalancer's DNS name
           command: |
-            touch ~/elb_dns.txt 
+            -- touch ~/elb_dns.txt 
             cat ~/inventory.txt
             cd ansible
             ansible-playbook -i ~/inventory.txt save-elb-dns.yml
-            cat ~/elb_dns.txt
+            cat /home/ubuntu/elb_dns.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - elb_dns.txt
+            - /home/ubuntu/elb_dns.txt
       - run:
          name: Echo elb text
          command: |
-             cat ~/elb_dns.txt
+             cat /home/ubuntu/elb_dns.txt
 
   deploy-docker:
     docker:
