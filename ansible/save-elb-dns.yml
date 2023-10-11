@@ -1,5 +1,5 @@
 ---
-- name: "Save LoadBalancer's DNS name locally"
+- name: Save LoadBalancer's DNS name locally
   hosts: management[0]
   user: ubuntu
   gather_facts: false
@@ -8,7 +8,7 @@
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   tasks:
     - name: Get the LoadBalancer's DNS name
-      shell: "/home/ubuntu/bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
+      shell: /home/ubuntu/bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service
       register: elb_dns
       args:
         chdir: /home/ubuntu/
@@ -17,33 +17,36 @@
       ansible.builtin.file:
         path: /home/ubuntu
         state: directory
-        mode: '0755'
+        mode: "0755"
 
-    - name: "create a file"
+    - name: create a file
       shell: touch /home/ubuntu/elb_dns.txt
-
-    
+      
     - name: Checking if directory is exits
       stat:
         path: /home/ubuntu
       register: directory_data
-    
+
+
     - name: print the current directory
-    - debug:
+      debug:
         msg: "The current directory : {{ lookup('env', 'PWD') }}"
 
-     - name: report if file directory exists
-       debug:
-          msg: "The directory exists"
-        when: directory_data.stat.exists
-      
-      - name: report if file directory exists
-        debug:
-          msg: "The directory is not exists"
-        when: not directory_data.stat.exists
-    
+
+    - name: report if file directory exists
+      debug:
+        msg: The directory exists
+      when: directory_data.stat.exists
+
+
+    - name: report if file directory exists
+      debug:
+        msg: The directory is not exists
+      when: not directory_data.stat.exists
+
+
     - name: Copy the output to a local file
       copy:
         content: "{{ elb_dns.stdout }}"
-        dest: "ّ/home/ubuntu/elb_dns.txt"
+        dest: ّ/home/ubuntu/elb_dns.txt
       delegate_to: localhost
