@@ -145,7 +145,7 @@ jobs:
       - checkout
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["62:13:b4:dc:20:9a:2b:91:00:45:d7:fb:07:08:ff:b7"]
+          fingerprints: ["dd:29:c9:c1:37:b5:81:69:d0:23:dc:16:76:72:85:fe"]
       - attach_workspace:
           at: ~/
       - run:
@@ -171,7 +171,7 @@ jobs:
       - checkout
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["62:13:b4:dc:20:9a:2b:91:00:45:d7:fb:07:08:ff:b7"]
+          fingerprints: ["dd:29:c9:c1:37:b5:81:69:d0:23:dc:16:76:72:85:fe"]
       - attach_workspace:
           at: ~/
       - run:
@@ -205,7 +205,7 @@ jobs:
             cat ~/inventory.txt
             cd ansible
             ansible-playbook -i ~/inventory.txt save-elb-dns.yml
-            # cat /home/ubuntu/elb_dns.txt
+            cat ~/elb_dns.txt
       - persist_to_workspace:
           root: ~/
           paths:
@@ -223,7 +223,7 @@ jobs:
       - checkout
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["62:13:b4:dc:20:9a:2b:91:00:45:d7:fb:07:08:ff:b7"]
+          fingerprints: ["dd:29:c9:c1:37:b5:81:69:d0:23:dc:16:76:72:85:fe"]
       - attach_workspace:
           at: ~/
       #- run:

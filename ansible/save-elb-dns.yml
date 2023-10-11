@@ -11,21 +11,21 @@
       shell: /home/ubuntu/bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service
       register: elb_dns
       args:
-        chdir: /home/ubuntu/
+        chdir: $HOME
 
-    - name: Create a directory if it does not exist
-      ansible.builtin.file:
-        path: /home/ubuntu
-        state: directory
-        mode: "0755"
+    #- name: Create a directory if it does not exist
+    #  ansible.builtin.file:
+    #    path: /home/ubuntu
+    #    state: directory
+    #    mode: "0755"
 
     - name: create a file
-      shell: touch /home/ubuntu/elb_dns.txt
-      
-    - name: Checking if directory is exits
-      stat:
-        path: /home/ubuntu
-      register: directory_data
+      shell: touch /home/circleci/project/ansible/elb_dns.txt
+
+    #- name: Checking if directory is exits
+    #  stat:
+    #    path: /home/circleci/project/ansible
+    #  register: directory_data
 
 
     - name: print the current directory
@@ -33,20 +33,20 @@
         msg: "The current directory : {{ lookup('env', 'PWD') }}"
 
 
-    - name: report if file directory exists
-      debug:
-        msg: The directory exists
-      when: directory_data.stat.exists
+    #- name: report if file directory exists
+    #  debug:
+    #    msg: The directory exists
+    #  when: directory_data.stat.exists
 
 
-    - name: report if file directory exists
-      debug:
-        msg: The directory is not exists
-      when: not directory_data.stat.exists
+    #- name: report if file directory exists
+    #  debug:
+    #    msg: The directory is not exists
+    #  when: not directory_data.stat.exists
 
 
     - name: Copy the output to a local file
       copy:
         content: "{{ elb_dns.stdout }}"
-        dest: ّ/home/ubuntu/elb_dns.txt
+        dest: /home/circleci/project/ansible/elb_dns.txt
       delegate_to: localhost
