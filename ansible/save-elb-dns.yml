@@ -10,7 +10,9 @@
     - name: Get the LoadBalancer's DNS name
       shell: "/home/ubuntu/bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
       register: elb_dns
-    
+      args:
+        chdir: /home/ubuntu/
+
     - name: Create a directory if it does not exist
       ansible.builtin.file:
         path: /home/ubuntu
@@ -18,11 +20,26 @@
         mode: '0755'
 
     - name: "create a file"
-      shell: touch ~/elb_dns.txt
-      
+      shell: touch /home/ubuntu/elb_dns.txt
 
+    
+    - name: Checking if directory is exits
+      stat:
+        path: /home/ubuntu
+      register: directory_data
+
+     - name: report if file directory exists
+       debug:
+          msg: "The directory exists"
+        when: directory_data.stat.exists
+      
+      - name: report if file directory exists
+        debug:
+          msg: "The directory is not exists"
+        when: not directory_data.stat.exists
+    
     - name: Copy the output to a local file
       copy:
         content: "{{ elb_dns.stdout }}"
-        dest: "ّ~/elb_dns.txt"
+        dest: "ّ/home/ubuntu/elb_dns.txt"
       delegate_to: localhost
